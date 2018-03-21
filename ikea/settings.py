@@ -16,4 +16,6 @@ USER_AGENT = 'ikea (+https://couch.cellebyte.de)'
 
 LOG_FILE = 'scrapyOperation.log'
 CONCURRENT_REQUESTS_PER_DOMAIN = 3
+LOG_LEVEL = 'INFO'
+RETRY_ENABLED = False
 CONCURRENT_SPIDERS = 3
