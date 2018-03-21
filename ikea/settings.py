@@ -10,7 +10,7 @@ BOT_NAME = 'ikea'
 
 SPIDER_MODULES = ['ikea.spiders']
 NEWSPIDER_MODULE = 'ikea.spiders'
-
+COOKIES_ENABLED = False
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'ikea (+https://couch.cellebyte.de)'
 
