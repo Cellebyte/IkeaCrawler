@@ -3,7 +3,6 @@ from scrapy.selector import HtmlXPathSelector
 from scrapy.linkextractors import LinkExtractor
 from ikea.items import IkeaItem
 
-
 class IkeaSpider(CrawlSpider):
     name = "ikea"
     allowed_domains = ["ikea.com"]
@@ -31,8 +30,8 @@ class IkeaSpider(CrawlSpider):
         hxs = HtmlXPathSelector(response)
         print('\nFound product URL-> {}'.format(response.url))
         item = IkeaItem()
-        item['description'] = hxs.select('/html/head/meta[@name="description"]/@content').extract()
-        item['keywords'] = hxs.select('/html/head/meta[@name="keywords"]/@content').extract()
+        item['description'] = hxs.select('string(/html/head/meta[@name="description"]/@content)').extract()
+        item['keywords'] = hxs.select('string(/html/head/meta[@name="keywords"]/@content)').extract()
         item['country'] = hxs.select('/html/head/meta[@name="country"]/@content').extract()
         item['language'] = hxs.select('/html/head/meta[@name="language"]/@content').extract()
         item['store_id'] = hxs.select('/html/head/meta[@name="store_id"]/@content').extract()
@@ -46,14 +45,14 @@ class IkeaSpider(CrawlSpider):
         item['changed_family_price_other'] = hxs.select('/html/head/meta[@name="changed_family_price_other"]/@content').extract()
         item['item_id'] = hxs.select('/html/head/meta[@name="item_id"]/@content').extract()
         item['partnumber'] = hxs.select('/html/head/meta[@name="partnumber"]/@content').extract()
-        item['url'] = response.url
+        item['url'] = [response.url]
         item['image'] = hxs.select('/html/head/meta[@property="og:image"]/@content').extract()
         return item
 
     def _page(self, response):
         hxs = HtmlXPathSelector(response)
         #Products selection
-        #products = hxs.select("//div[@class='productInformation']")
+        #products = codecs.decode(hxs.select("//div[@class='productInformation']"), 'unicode-escape')
         productName = hxs.select("div[@id='schemaProductPrice']").extract()
         print("holaaaaa")
         print(productName)
