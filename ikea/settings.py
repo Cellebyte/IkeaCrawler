@@ -12,7 +12,7 @@ SPIDER_MODULES = ['ikea.spiders']
 NEWSPIDER_MODULE = 'ikea.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'ikea (+http://www.yourdomain.com)'
+USER_AGENT = 'ikea (+https://couch.cellebyte.de)'
 
 LOG_FILE = 'scrapyOperation.log'
 CONCURRENT_REQUESTS_PER_DOMAIN = 3

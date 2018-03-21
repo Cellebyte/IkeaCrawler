@@ -17,7 +17,7 @@ class IkeaItem(Item):
     title = Field()
     product_name = Field()
     category_name = Field()
-    subcategory_if = Field()
+    subcategory_id = Field()
     price = Field()
     price_other = Field()
     changed_family_price = Field()
