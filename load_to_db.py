@@ -1,7 +1,7 @@
 import sys
 import couchdb
 import json
-SERVER = couchdb.client.Server()
+SERVER = couchdb.client.Server(url="http://admin:admin@localhost:5984")
 
 
 def import_db(filename):
