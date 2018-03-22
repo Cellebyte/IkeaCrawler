@@ -28,7 +28,7 @@ def open_files(readfilename, writefilename):
     """Function to open the files """
     try:
         readfile = open(readfilename, "r")
-        writefile = open(writefilename, "ab")
+        writefile = open(writefilename, "a")
     except IOError:
         print("Ups, something went wrong with file openings!")
         exit()
@@ -50,7 +50,7 @@ def write_json_file(filename, json_item):
     """Function for writing an item in a Json file"""
     try:
         # This tries to open an existing file but creates a new file if necessary.
-        filename.write(json.dumps(json_item, ensure_ascii=False).encode('utf8') + b'\n')
+        filename.write(json.dumps(json_item))
     except IOError:
         print("Ups, something went wrong when writing the file")
         exit()

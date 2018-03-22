@@ -1,23 +1,18 @@
 import sys
 import couchdb
 import json
-SERVER = couchdb.client.Server(url="http://admin:admin@localhost:5984")
+SERVER = couchdb.client.Server(url="http://admin:admin@127.0.0.1:5984")
 
 
 def import_db(filename):
     try:
-        new = True
         db = SERVER.create('crawler')
     except (couchdb.http.PreconditionFailed):
-        new = False
         db = SERVER['crawler']
-    with open(filename, 'rb') as json_data:
+    with open(filename, 'r') as json_data:
         data = json.load(json_data)
-    if new:
-        for item in data:
-            db[item['item_id'][0]] = item
-    else:
-        for item in data:
+    for item in data:
+        try:
             doc = db[item['item_id'][0]]
             doc['description'] = item['description']
             doc['keywords'] = item['keywords']
@@ -37,6 +32,8 @@ def import_db(filename):
             doc['url'] = item['url']
             doc['image'] = item['image']
             db.save(doc)
+        except couchdb.http.ResourceNotFound:
+            db[item['item_id'][0]] = item
 
 if __name__ == "__main__":
     import_db(sys.argv[1])
