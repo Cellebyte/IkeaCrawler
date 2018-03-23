@@ -28,7 +28,7 @@ class IkeaSpider(CrawlSpider):
         hxs = HtmlXPathSelector(response)
         print('\nFound product URL-> {}'.format(response.url))
         item = IkeaItem()
-        item['description'] = hxs.select('string(/html/head/meta[@name="description"]/@content)').extract()
+        item['description'] = hxs.select('string(/html/head/meta[@name="og:description"]/@content)').extract()
         item['keywords'] = hxs.select('string(/html/head/meta[@name="keywords"]/@content)').extract()
         item['country'] = hxs.select('/html/head/meta[@name="country"]/@content').extract()
         item['language'] = hxs.select('/html/head/meta[@name="language"]/@content').extract()
