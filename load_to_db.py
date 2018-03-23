@@ -36,7 +36,7 @@ def import_db(filename):
             try:
                 db[item['item_id'][0]] = item
             except IndexError:
-                print("IndexError")
+                print("no_item_id:\n{}".format(item))
                 pass
         except IndexError:
             print("no_item_id:\n{}".format(item))
