@@ -1,45 +1,84 @@
 import sys
 import couchdb
 import json
+import copy
 SERVER = couchdb.client.Server(url="http://admin:admin@127.0.0.1:5984")
 
+ITEM_IDS = {}
 
-def import_db(filename):
+regexes = {
+    'sofas': [
+        r'^.*?"keywords": \[".*sofa.*$'
+    ],
+    'betten': [
+        r'^.*bettgestell.*$',
+        r'^.*bettrahmen.*$',
+        r'^.*tagesbett.*$'
+    ],
+    'kallax': [
+        r'^.*kallax.*$',
+        r'^.*dröna.*$'
+    ],
+    'Schränke': r'' 
+}
+
+def handle_store(db,data):
     try:
-        db = SERVER.create('crawler')
+        new = True
+        db = SERVER.create(db)
     except (couchdb.http.PreconditionFailed):
-        db = SERVER['crawler']
-    with open(filename, 'r') as json_data:
-        data = json.load(json_data)
+        new = False
+        db = SERVER[db]
     for item in data:
-        try:
-            doc = db[item['item_id'][0]]
-            doc['description'] = item['description']
-            doc['keywords'] = item['keywords']
-            doc['country'] = item['country']
-            doc['language'] = item['language']
-            doc['store_id'] = item['store_id']
-            doc['title'] = item['title']
-            doc['product_name'] = item['product_name']
-            doc['category_name'] = item['category_name']
-            doc['subcategory_id'] = item['subcategory_id']
-            doc['price'] = item['price']
-            doc['price_other'] = item['price_other']
-            doc['changed_family_price'] = item['changed_family_price']
-            doc['changed_family_price_other'] = item['changed_family_price_other']
-            doc['item_id'] = item['item_id']
-            doc['partnumber'] = item['partnumber']
-            doc['url'] = item['url']
-            doc['image'] = item['image']
-            db.save(doc)
-        except couchdb.http.ResourceNotFound:
+        if new:
             try:
                 db[item['item_id'][0]] = item
             except IndexError:
-                print("no_item_id:\n{}".format(item))
+                print("no_item_id:\n{}\nIgnoring it".format(item))
                 pass
-        except IndexError:
-            print("no_item_id:\n{}".format(item))
+        else:
+            try:
+                doc = db[item['item_id'][0]]
+                for key in item.keys():
+                    if not 'item_id' in key:
+                        doc[key] = item[key]
+                db.save(doc)
+            except couchdb.http.ResourceNotFound:
+                try:
+                    db[item['item_id'][0]] = item
+                except IndexError:
+                    print("no_item_id:\n{}".format(item))
+                    pass
+            except IndexError:
+                print("no_item_id:\n{}\nIgnoring it".format(item))
+
+def merge(key, value):
+    """Function to check if the item_id has been already dumped"""
+    global ITEM_IDS
+    print("Key", key)
+    try:
+        ITEM_IDS[key].append(copy.deepcopy(value))
+    except (KeyError,AttributeError):
+        ITEM_IDS[key] = [ copy.deepcopy(value) ]
+        pass
+    pass
+
+def flatten(list_of_lists):
+    '''
+    Makes a list of lists flatten
+    @param  l          list
+    @return l          flattened list
+    [[1,2,3][4,5,6]]
+    gets
+    [1,2,3,4,5,6]
+    '''
+    return [item for sublist in list_of_lists for item in sublist]
 
 if __name__ == "__main__":
-    import_db(sys.argv[1])
+    with open(sys.argv[1], 'r') as import_file:
+        json_items = json.load(import_file)
+    
+    for json_item in json_items:
+        merge(json_item['subcategory_id'][0],json_item)
+    with open('test.json', 'w') as json_pt:
+        json_pt.write(json.dumps(ITEM_IDS,ensure_ascii=False))

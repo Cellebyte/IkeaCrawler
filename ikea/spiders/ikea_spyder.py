@@ -8,8 +8,6 @@ class IkeaSpider(CrawlSpider):
     allowed_domains = ["ikea.com"]
     start_urls = [
         "http://www.ikea.com/de/de/catalog/allproducts/",
-        #"http://www.ikea.com/es/es/catalog/categories/departments/workspaces/16195/",
-        #"http://www.ikea.com/es/es/catalog/products/S19903730/index.html/"
     ]
     extractor = LinkExtractor()
 
@@ -19,7 +17,7 @@ class IkeaSpider(CrawlSpider):
 
     rules = (
         # Extract links matching 'item.php' and parse them with the spider's method parse_item
-        Rule(LinkExtractor(allow=('catalog/products/.*', )), callback='parse_item'),
+        Rule(LinkExtractor(allow=('de/de/catalog/products/.*', )), callback='parse_item'),
 
         # and follow links from them (since no callback means follow=True by default).
         Rule(LinkExtractor()),
