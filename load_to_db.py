@@ -33,7 +33,11 @@ def import_db(filename):
             doc['image'] = item['image']
             db.save(doc)
         except couchdb.http.ResourceNotFound:
-            db[item['item_id'][0]] = item
+            try:
+                db[item['item_id'][0]] = item
+            except IndexError:
+                print("IndexError")
+                pass
 
 if __name__ == "__main__":
     import_db(sys.argv[1])
