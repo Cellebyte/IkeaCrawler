@@ -38,6 +38,8 @@ def import_db(filename):
             except IndexError:
                 print("IndexError")
                 pass
+        except IndexError:
+            print("no_item_id:\n{}".format(item))
 
 if __name__ == "__main__":
     import_db(sys.argv[1])
